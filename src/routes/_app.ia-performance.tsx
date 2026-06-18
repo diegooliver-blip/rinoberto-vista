@@ -83,8 +83,8 @@ function IaPerformancePage() {
               <div key={h} className="text-center text-muted-foreground">{h}</div>
             ))}
             {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d, di) => (
-              <>
-                <div key={d} className="flex items-center text-muted-foreground">{d}</div>
+              <Fragment key={d}>
+                <div className="flex items-center text-muted-foreground">{d}</div>
                 {m.heatmap[di].map((v, hi) => {
                   const intensity = v / max;
                   return (
@@ -96,7 +96,7 @@ function IaPerformancePage() {
                     />
                   );
                 })}
-              </>
+              </Fragment>
             ))}
           </div>
           <div className="flex items-center gap-2 mt-3 text-[10px] text-muted-foreground">
