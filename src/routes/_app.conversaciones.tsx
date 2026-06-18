@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Search, Filter, MessageCircle, Bot, Workflow as WorkflowIcon, Tag } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getConversations, getConversationById, type Conversation } from "@/lib/mock-data";
+import { fetchConversations, fetchConversationStats } from "@/lib/data";
+import { getConversationById, type Conversation } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/conversaciones")({
@@ -16,7 +18,10 @@ export const Route = createFileRoute("/_app/conversaciones")({
 const ESTADOS = ["Todos", "Nuevo Lead", "Contactado", "Calificado", "Cita Agendada", "Cerrado Ganado", "Cerrado Perdido"];
 
 function ConversacionesPage() {
-  const all = useMemo(() => getConversations(), []);
+  const { data: all = [], isLoading } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: () => fetchConversations({ data: { limit: 100 } }),
+  });
   const [query, setQuery] = useState("");
   const [estado, setEstado] = useState("Todos");
   const [selectedId, setSelectedId] = useState<string>(all[0]?.id ?? "");

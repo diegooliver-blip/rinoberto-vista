@@ -223,3 +223,97 @@ export async function getKpisFromN8n(): Promise<KpiCard[]> {
     return [];
   }
 }
+
+// ============================================================
+// PARSEO DE EJECUCIONES - Extraer conversaciones y leads
+// ============================================================
+
+export interface ParsedExecution {
+  executionId: string;
+  workflowId: string;
+  timestamp: string;
+  status: string;
+  telefono?: string;
+  contacto?: string;
+  mensaje?: string;
+  respuesta?: string;
+  intencion?: string;
+  urgencia?: string;
+  canal?: string;
+}
+
+export async function getExecutionDetail(executionId: string) {
+  try {
+    return await n8nFetch<any>(`/executions/${executionId}?includeData=true`);
+  } catch {
+    return null;
+  }
+}
+
+export async function parseRhinobertoExecutions(limit = 20): Promise<ParsedExecution[]> {
+  try {
+    const executions = await getN8nWorkflowExecutions("Gq72rk97ysswPENK", limit);
+    const parsed: ParsedExecution[] = [];
+
+    for (const exec of executions) {
+      const detail = await getExecutionDetail(exec.id);
+      if (!detail || !detail.data) continue;
+
+      const resultData = detail.data?.resultData?.runData || {};
+      const webhookNode = Object.keys(resultData).find((k) =>
+        k.toLowerCase().includes("webhook")
+      );
+
+      let telefono = "";
+      let contacto = "";
+      let mensaje = "";
+      let respuesta = "";
+      let intencion = "";
+      let urgencia = "normal";
+      let canal = "WhatsApp";
+
+      if (webhookNode && resultData[webhookNode]?.[0]?.data?.[0]?.json?.body) {
+        const body = resultData[webhookNode][0].data[0].json.body;
+        telefono = body.data?.key?.remoteJid || body.sender || "";
+        contacto = body.data?.pushName || body.pushName || "Cliente";
+        mensaje = body.data?.message?.conversation || body.data?.message?.extendedTextMessage?.text || "";
+      }
+
+      const httpNode = Object.keys(resultData).find((k) =>
+        k.toLowerCase().includes("mandar") || k.toLowerCase().includes("send")
+      );
+      if (httpNode && resultData[httpNode]?.[0]?.data?.[0]?.json) {
+        const sendData = resultData[httpNode][0].data[0].json;
+        respuesta = sendData.text || "";
+      }
+
+      const codeNode = Object.keys(resultData).find((k) =>
+        k.toLowerCase().includes("analisis") || k.toLowerCase().includes("intencion")
+      );
+      if (codeNode && resultData[codeNode]?.[0]?.data?.[0]?.json) {
+        const analysis = resultData[codeNode][0].data[0].json;
+        intencion = analysis.tipo_consulta || analysis.intention || "";
+        urgencia = analysis.urgencia || analysis.urgency || "normal";
+      }
+
+      parsed.push({
+        executionId: exec.id,
+        workflowId: exec.workflowId,
+        timestamp: exec.startedAt,
+        status: exec.status,
+        telefono,
+        contacto,
+        mensaje,
+        respuesta,
+        intencion,
+        urgencia,
+        canal,
+      });
+    }
+
+    return parsed;
+  } catch (err) {
+    console.error("Error parseando ejecuciones:", err);
+    return [];
+  }
+}

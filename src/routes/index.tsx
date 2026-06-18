@@ -17,7 +17,7 @@ function Index() {
     <div className="grid min-h-screen place-items-center bg-background">
       <div className="flex items-center gap-3 text-muted-foreground">
         <div className="size-2 rounded-full bg-brand animate-pulse" />
-        <span className="text-sm">Cargando Rinoberto Intelligence Portal…</span>
+        <span className="text-sm">Cargando Portal Rhinoberto SLA...</span>
       </div>
     </div>
   );

@@ -50,12 +50,12 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
         <div className="grid size-9 place-items-center rounded-lg bg-brand text-brand-foreground shadow-sm">
           <Sparkles className="size-4" strokeWidth={2.5} />
         </div>
-        <div className="min-w-0">
-          <div className="text-sm font-semibold tracking-tight leading-none">Rinoberto</div>
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1">
-            Intelligence Portal
+          <div className="min-w-0">
+            <div className="text-sm font-semibold tracking-tight leading-none">Rhinoberto</div>
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1">
+              Portal SLA Asociados
+            </div>
           </div>
-        </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">

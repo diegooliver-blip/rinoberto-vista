@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Search, Download, TrendingUp } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getLeads } from "@/lib/mock-data";
+import { fetchLeads } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/leads")({
@@ -20,7 +21,10 @@ function scoreTone(score: number) {
 }
 
 function LeadsPage() {
-  const all = useMemo(() => getLeads(), []);
+  const { data: all = [] } = useQuery({
+    queryKey: ["leads"],
+    queryFn: () => fetchLeads({ data: { limit: 100 } }),
+  });
   const [q, setQ] = useState("");
   const [region, setRegion] = useState("Todas");
   const [estado, setEstado] = useState("Todos");

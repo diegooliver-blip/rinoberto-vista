@@ -1,5 +1,7 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "rinoberto-portal",
+  "version": "1.0.0",
+  "description": "Portal de inteligencia y control para Rhinoberto - Agente virtual de SLA Asociados",
   "private": true,
   "sideEffects": false,
   "type": "module",

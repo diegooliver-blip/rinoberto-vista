@@ -1,5 +1,5 @@
-// Sistema de autenticación simulado (mock) usando localStorage.
-// En el futuro se reemplaza por Lovable Cloud / Supabase Auth sin cambiar la API pública.
+// Sistema de autenticacion para el Portal Rhinoberto - SLA Asociados
+// Autenticacion local con session storage. En produccion se recomienda JWT o OAuth2.
 
 export type UserRole = "admin" | "manager" | "viewer";
 
