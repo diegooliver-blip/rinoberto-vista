@@ -23,7 +23,7 @@ function scoreTone(score: number) {
 function LeadsPage() {
   const { data: all = [] } = useQuery({
     queryKey: ["leads"],
-    queryFn: () => fetchLeads({ data: { limit: 100 } }),
+    queryFn: () => fetchLeads(),
   });
   const [q, setQ] = useState("");
   const [region, setRegion] = useState("Todas");

@@ -21,27 +21,28 @@ const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--cha
 function DashboardPage() {
   const { data: kpis = [] } = useQuery({
     queryKey: ["kpis"],
-    queryFn: () => fetchKpis({ data: undefined }),
+    queryFn: () => fetchKpis(),
   });
   const { data: trend = [] } = useQuery({
     queryKey: ["trend"],
-    queryFn: () => fetchTrend({ data: undefined }),
+    queryFn: () => fetchTrend(),
   });
   const { data: workflows = [] } = useQuery({
     queryKey: ["workflows"],
-    queryFn: () => fetchWorkflows({ data: undefined }),
+    queryFn: () => fetchWorkflows(),
   });
   const { data: recent = [] } = useQuery({
     queryKey: ["conversations"],
-    queryFn: () => fetchConversations({ data: undefined }),
+    queryFn: () => fetchConversations(),
   });
   const { data: mix = [] } = useQuery({
     queryKey: ["sourceMix"],
-    queryFn: () => fetchSourceMix({ data: undefined }),
+    queryFn: () => fetchSourceMix(),
   });
   const { data: funnel = [] } = useQuery({
     queryKey: ["funnel"],
-    queryFn: () => fetchFunnel({ data: undefined }),
+    queryFn: () => fetchFunnel(),
+  });
   });
 
   const topWorkflows = workflows.slice(0, 5);

@@ -20,7 +20,7 @@ const ESTADOS = ["Todos", "Nuevo Lead", "Contactado", "Calificado", "Cita Agenda
 function ConversacionesPage() {
   const { data: all = [], isLoading } = useQuery({
     queryKey: ["conversations"],
-    queryFn: () => fetchConversations({ data: { limit: 100 } }),
+    queryFn: () => fetchConversations(),
   });
   const [query, setQuery] = useState("");
   const [estado, setEstado] = useState("Todos");

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_app/automatizaciones")({
 function AutomatizacionesPage() {
   const { data: workflows = [], isLoading, refetch } = useQuery({
     queryKey: ["workflows"],
-    queryFn: () => fetchWorkflows({ data: undefined }),
+    queryFn: () => fetchWorkflows(),
   });
 
   const activos = workflows.filter((w) => w.estado === "activo").length;
