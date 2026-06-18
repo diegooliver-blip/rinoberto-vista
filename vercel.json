@@ -1,9 +1,9 @@
 {
-  "buildCommand": "vite build",
-  "outputDirectory": "dist",
-  "framework": "vite",
+  "buildCommand": "npm install && npm run build",
   "installCommand": "npm install",
+  "framework": "vite",
   "rewrites": [
+    { "source": "/api/webhook/n8n", "destination": "/api/webhook/n8n" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
