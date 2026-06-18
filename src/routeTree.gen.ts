@@ -12,9 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppReportesRouteImport } from './routes/_app.reportes'
+import { Route as AppNotificacionesRouteImport } from './routes/_app.notificaciones'
 import { Route as AppLeadsRouteImport } from './routes/_app.leads'
+import { Route as AppKnowledgeRouteImport } from './routes/_app.knowledge'
+import { Route as AppIaPerformanceRouteImport } from './routes/_app.ia-performance'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppConversacionesRouteImport } from './routes/_app.conversaciones'
+import { Route as AppConfiguracionRouteImport } from './routes/_app.configuracion'
+import { Route as AppAutomatizacionesRouteImport } from './routes/_app.automatizaciones'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -30,9 +36,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppReportesRoute = AppReportesRouteImport.update({
+  id: '/reportes',
+  path: '/reportes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificacionesRoute = AppNotificacionesRouteImport.update({
+  id: '/notificaciones',
+  path: '/notificaciones',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLeadsRoute = AppLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppKnowledgeRoute = AppKnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIaPerformanceRoute = AppIaPerformanceRouteImport.update({
+  id: '/ia-performance',
+  path: '/ia-performance',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
@@ -45,43 +71,99 @@ const AppConversacionesRoute = AppConversacionesRouteImport.update({
   path: '/conversaciones',
   getParentRoute: () => AppRoute,
 } as any)
+const AppConfiguracionRoute = AppConfiguracionRouteImport.update({
+  id: '/configuracion',
+  path: '/configuracion',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAutomatizacionesRoute = AppAutomatizacionesRouteImport.update({
+  id: '/automatizaciones',
+  path: '/automatizaciones',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/automatizaciones': typeof AppAutomatizacionesRoute
+  '/configuracion': typeof AppConfiguracionRoute
   '/conversaciones': typeof AppConversacionesRoute
   '/dashboard': typeof AppDashboardRoute
+  '/ia-performance': typeof AppIaPerformanceRoute
+  '/knowledge': typeof AppKnowledgeRoute
   '/leads': typeof AppLeadsRoute
+  '/notificaciones': typeof AppNotificacionesRoute
+  '/reportes': typeof AppReportesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/automatizaciones': typeof AppAutomatizacionesRoute
+  '/configuracion': typeof AppConfiguracionRoute
   '/conversaciones': typeof AppConversacionesRoute
   '/dashboard': typeof AppDashboardRoute
+  '/ia-performance': typeof AppIaPerformanceRoute
+  '/knowledge': typeof AppKnowledgeRoute
   '/leads': typeof AppLeadsRoute
+  '/notificaciones': typeof AppNotificacionesRoute
+  '/reportes': typeof AppReportesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/_app/automatizaciones': typeof AppAutomatizacionesRoute
+  '/_app/configuracion': typeof AppConfiguracionRoute
   '/_app/conversaciones': typeof AppConversacionesRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/ia-performance': typeof AppIaPerformanceRoute
+  '/_app/knowledge': typeof AppKnowledgeRoute
   '/_app/leads': typeof AppLeadsRoute
+  '/_app/notificaciones': typeof AppNotificacionesRoute
+  '/_app/reportes': typeof AppReportesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/conversaciones' | '/dashboard' | '/leads'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/automatizaciones'
+    | '/configuracion'
+    | '/conversaciones'
+    | '/dashboard'
+    | '/ia-performance'
+    | '/knowledge'
+    | '/leads'
+    | '/notificaciones'
+    | '/reportes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/conversaciones' | '/dashboard' | '/leads'
+  to:
+    | '/'
+    | '/login'
+    | '/automatizaciones'
+    | '/configuracion'
+    | '/conversaciones'
+    | '/dashboard'
+    | '/ia-performance'
+    | '/knowledge'
+    | '/leads'
+    | '/notificaciones'
+    | '/reportes'
   id:
     | '__root__'
     | '/'
     | '/_app'
     | '/login'
+    | '/_app/automatizaciones'
+    | '/_app/configuracion'
     | '/_app/conversaciones'
     | '/_app/dashboard'
+    | '/_app/ia-performance'
+    | '/_app/knowledge'
     | '/_app/leads'
+    | '/_app/notificaciones'
+    | '/_app/reportes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -113,11 +195,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/reportes': {
+      id: '/_app/reportes'
+      path: '/reportes'
+      fullPath: '/reportes'
+      preLoaderRoute: typeof AppReportesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/notificaciones': {
+      id: '/_app/notificaciones'
+      path: '/notificaciones'
+      fullPath: '/notificaciones'
+      preLoaderRoute: typeof AppNotificacionesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/leads': {
       id: '/_app/leads'
       path: '/leads'
       fullPath: '/leads'
       preLoaderRoute: typeof AppLeadsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/knowledge': {
+      id: '/_app/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof AppKnowledgeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ia-performance': {
+      id: '/_app/ia-performance'
+      path: '/ia-performance'
+      fullPath: '/ia-performance'
+      preLoaderRoute: typeof AppIaPerformanceRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dashboard': {
@@ -134,19 +244,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppConversacionesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/configuracion': {
+      id: '/_app/configuracion'
+      path: '/configuracion'
+      fullPath: '/configuracion'
+      preLoaderRoute: typeof AppConfiguracionRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/automatizaciones': {
+      id: '/_app/automatizaciones'
+      path: '/automatizaciones'
+      fullPath: '/automatizaciones'
+      preLoaderRoute: typeof AppAutomatizacionesRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAutomatizacionesRoute: typeof AppAutomatizacionesRoute
+  AppConfiguracionRoute: typeof AppConfiguracionRoute
   AppConversacionesRoute: typeof AppConversacionesRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppIaPerformanceRoute: typeof AppIaPerformanceRoute
+  AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppLeadsRoute: typeof AppLeadsRoute
+  AppNotificacionesRoute: typeof AppNotificacionesRoute
+  AppReportesRoute: typeof AppReportesRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAutomatizacionesRoute: AppAutomatizacionesRoute,
+  AppConfiguracionRoute: AppConfiguracionRoute,
   AppConversacionesRoute: AppConversacionesRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppIaPerformanceRoute: AppIaPerformanceRoute,
+  AppKnowledgeRoute: AppKnowledgeRoute,
   AppLeadsRoute: AppLeadsRoute,
+  AppNotificacionesRoute: AppNotificacionesRoute,
+  AppReportesRoute: AppReportesRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
