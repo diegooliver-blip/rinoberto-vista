@@ -43,7 +43,6 @@ function DashboardPage() {
     queryKey: ["funnel"],
     queryFn: () => fetchFunnel(),
   });
-  });
 
   const topWorkflows = workflows.slice(0, 5);
 
