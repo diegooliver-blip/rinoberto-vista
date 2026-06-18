@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Play, Pause, RefreshCw, AlertTriangle, CheckCircle2, Activity } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
-import { getWorkflows } from "@/lib/mock-data";
+import { fetchWorkflows } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/automatizaciones")({
@@ -12,19 +13,27 @@ export const Route = createFileRoute("/_app/automatizaciones")({
 });
 
 function AutomatizacionesPage() {
-  const workflows = getWorkflows();
+  const { data: workflows = [], isLoading, refetch } = useQuery({
+    queryKey: ["workflows"],
+    queryFn: () => fetchWorkflows({ data: undefined }),
+  });
+
   const activos = workflows.filter((w) => w.estado === "activo").length;
   const errores = workflows.filter((w) => w.estado === "error").length;
   const totalEjec = workflows.reduce((s, w) => s + w.ejecuciones24h, 0);
-  const exitoProm = workflows.filter((w) => w.exito > 0).reduce((s, w) => s + w.exito, 0) / workflows.filter((w) => w.exito > 0).length;
+  const exitoProm =
+    workflows.filter((w) => w.exito > 0).length > 0
+      ? workflows.filter((w) => w.exito > 0).reduce((s, w) => s + w.exito, 0) /
+        workflows.filter((w) => w.exito > 0).length
+      : 0;
 
   return (
     <AppShell
       title="Centro de Automatizaciones"
       breadcrumb="Monitoreo n8n"
-      description="Visualización en tiempo real del ecosistema n8n: workflows activos, ejecuciones, fallas y latencia."
+      description="Visualizacion en tiempo real del ecosistema n8n: workflows activos, ejecuciones, fallas y latencia."
       actions={
-        <Button variant="outline" size="sm" className="gap-1.5">
+        <Button variant="outline" size="sm" className="gap-1.5" onClick={() => refetch()}>
           <RefreshCw className="size-3.5" /> Sincronizar
         </Button>
       }
@@ -33,53 +42,65 @@ function AutomatizacionesPage() {
         <SystemStat icon={CheckCircle2} label="Workflows activos" value={`${activos}/${workflows.length}`} tone="success" />
         <SystemStat icon={Activity} label="Ejecuciones 24h" value={totalEjec.toLocaleString()} tone="info" />
         <SystemStat icon={AlertTriangle} label="Errores activos" value={errores.toString()} tone={errores > 0 ? "destructive" : "muted"} />
-        <SystemStat icon={CheckCircle2} label="Tasa de éxito" value={`${exitoProm.toFixed(1)}%`} tone="brand" />
+        <SystemStat icon={CheckCircle2} label="Tasa de exito" value={`${exitoProm.toFixed(1)}%`} tone="brand" />
       </div>
 
-      {/* Workflow cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {workflows.map((w) => (
-          <div key={w.id} className="rounded-xl border border-border bg-card p-5 hover:border-brand/30 transition-colors">
-            <div className="flex items-start justify-between gap-2 mb-3">
-              <div className="min-w-0">
-                <p className="text-sm font-semibold truncate">{w.nombre}</p>
-                <p className="text-[10px] text-muted-foreground font-mono">{w.id} · {w.fuente}</p>
-              </div>
-              <StatusBadge status={w.estado} />
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 my-4">
-              <Metric label="Ejec. 24h" value={w.ejecuciones24h.toLocaleString()} />
-              <Metric label="Éxito" value={`${w.exito.toFixed(1)}%`} />
-              <Metric label="Latencia" value={`${w.latenciaMs}ms`} />
-            </div>
-
-            {/* Health bar */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                <span>Salud del flujo</span>
-                <span className="font-mono">{w.exito.toFixed(1)}%</span>
-              </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                <div className={cn(
-                  "h-full transition-all",
-                  w.exito >= 99 ? "bg-success" : w.exito >= 90 ? "bg-warning" : "bg-destructive"
-                )} style={{ width: `${w.exito || 5}%` }} />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
-              <span className="text-[10px] text-muted-foreground">Última: {w.ultimaEjecucion}</span>
-              <div className="flex gap-1">
-                <Button variant="ghost" size="icon" className="size-7">
-                  {w.estado === "inactivo" ? <Play className="size-3.5" /> : <Pause className="size-3.5" />}
-                </Button>
-                <Button variant="ghost" size="icon" className="size-7"><RefreshCw className="size-3.5" /></Button>
-              </div>
-            </div>
+      {isLoading ? (
+        <div className="grid min-h-[300px] place-items-center">
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <div className="size-2 rounded-full bg-brand animate-pulse" />
+            <span className="text-sm">Cargando workflows desde n8n...</span>
           </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {workflows.map((w) => (
+            <div key={w.id} className="rounded-xl border border-border bg-card p-5 hover:border-brand/30 transition-colors">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold truncate">{w.nombre}</p>
+                  <p className="text-[10px] text-muted-foreground font-mono">{w.id} · {w.fuente}</p>
+                </div>
+                <StatusBadge status={w.estado} />
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 my-4">
+                <Metric label="Ejec. 24h" value={w.ejecuciones24h.toLocaleString()} />
+                <Metric label="Exito" value={`${w.exito.toFixed(1)}%`} />
+                <Metric label="Latencia" value={`${w.latenciaMs}ms`} />
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>Salud del flujo</span>
+                  <span className="font-mono">{w.exito.toFixed(1)}%</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full transition-all",
+                      w.exito >= 99 ? "bg-success" : w.exito >= 90 ? "bg-warning" : "bg-destructive"
+                    )}
+                    style={{ width: `${w.exito || 5}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
+                <span className="text-[10px] text-muted-foreground">Ultima: {w.ultimaEjecucion}</span>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" className="size-7">
+                    {w.estado === "inactivo" ? <Play className="size-3.5" /> : <Pause className="size-3.5" />}
+                  </Button>
+                  <Button variant="ghost" size="icon" className="size-7" onClick={() => refetch()}>
+                    <RefreshCw className="size-3.5" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </AppShell>
   );
 }

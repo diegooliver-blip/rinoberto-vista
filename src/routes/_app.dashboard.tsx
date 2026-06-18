@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Download, Plus, Activity } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import { KpiCard } from "@/components/kpi-card";
 import { StatusBadge } from "@/components/status-badge";
@@ -8,9 +9,7 @@ import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, BarChart, Bar,
 } from "recharts";
-import {
-  getKpis, getTrend, getWorkflows, getConversations, getSourceMix, getFunnel,
-} from "@/lib/mock-data";
+import { fetchKpis, fetchWorkflows, fetchTrend, fetchSourceMix, fetchFunnel, fetchConversations } from "@/lib/data";
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({ meta: [{ title: "Panel de Control — Rinoberto" }] }),
@@ -20,12 +19,32 @@ export const Route = createFileRoute("/_app/dashboard")({
 const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
 
 function DashboardPage() {
-  const kpis = getKpis();
-  const trend = getTrend(7);
-  const workflows = getWorkflows().slice(0, 5);
-  const recent = getConversations(4);
-  const mix = getSourceMix();
-  const funnel = getFunnel();
+  const { data: kpis = [] } = useQuery({
+    queryKey: ["kpis"],
+    queryFn: () => fetchKpis({ data: undefined }),
+  });
+  const { data: trend = [] } = useQuery({
+    queryKey: ["trend"],
+    queryFn: () => fetchTrend({ data: undefined }),
+  });
+  const { data: workflows = [] } = useQuery({
+    queryKey: ["workflows"],
+    queryFn: () => fetchWorkflows({ data: undefined }),
+  });
+  const { data: recent = [] } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: () => fetchConversations({ data: undefined }),
+  });
+  const { data: mix = [] } = useQuery({
+    queryKey: ["sourceMix"],
+    queryFn: () => fetchSourceMix({ data: undefined }),
+  });
+  const { data: funnel = [] } = useQuery({
+    queryKey: ["funnel"],
+    queryFn: () => fetchFunnel({ data: undefined }),
+  });
+
+  const topWorkflows = workflows.slice(0, 5);
 
   return (
     <AppShell
